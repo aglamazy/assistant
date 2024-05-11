@@ -1,0 +1,43 @@
+/* LoginPage.css */
+.loginPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+.loginContainer {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;  /* Makes label and input align in a row */
+    align-items: center; /* Centers the items vertically */
+}
+
+.form-group label {
+    flex: 0 0 100px; /* Gives a fixed width to the label */
+    margin-right: 10px; /* Adds some space between the label and the input */
+    text-align: right; /* Aligns the text to the right of the label */
+}
+
+.form-group input,
+.form-group button {
+    flex: 1;  /* Allows the input and button to fill the available space */
+    padding: 8px;
+    line-height: 1.5; /* Makes the input text slightly taller, easier to read */
+}
+
+.form-group button {
+    width: auto;  /* Overrides any width setting to fit text */
+    padding: 10px 20px; /* More padding for better clickability */
+    margin-top: 20px; /* Adds space above the button */
+}
