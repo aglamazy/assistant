@@ -1,14 +1,39 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {authRouter} from "./routers/authRouter";
+import knex from 'knex';
+import knexConfig from './knexfile';
 
 const app = express();
-const PORT = 3000;
+const port = 3001;
+
+const db = knex(knexConfig.development);
 
 app.use(bodyParser.json());
 
 app.use('/auth', authRouter);
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+async function checkDatabaseConnection(): Promise<boolean> {
+    try {
+
+        const result = await db.raw('SELECT NOW()');
+        console.log("Successfully connected to the database.");
+        console.log("Current Date and Time:", result.rows[0].now);
+        return true;
+    } catch (error) {
+        console.error("Failed to connect to the database:", error);
+        return false;
+    }
+}
+
+async function startServer() {
+    if (await checkDatabaseConnection()) {
+        app.listen(port, () => {
+            console.log(`Server running on http://localhost:${port}`);
+        });
+    } else {
+        console.log("Server not started due to database connection failure.");
+    }
+}
+
+startServer();
