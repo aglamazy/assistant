@@ -1,9 +1,12 @@
 import React from 'react';
-import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 
 const Registration = () => {
-    const clientId = "YOUR_GOOGLE_CLIENT_ID";
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+    if (! clientId) {
+        return (<p>Not configured</p>);
+    }
 
     const onSuccess = async (response: any) => {
         console.log('Login Success: currentUser:', response.profileObj);
@@ -25,14 +28,14 @@ const Registration = () => {
     return (
         <div>
             <h1>Register</h1>
-            <GoogleLogin
-                clientId={clientId}
-                buttonText="Register with Google"
-                onSuccess={onSuccess}
-                onFailure={onFailure}
-                cookiePolicy={'single_host_origin'}
-                responseType='code,token'
-            />
+            {/*<GoogleLogin*/}
+            {/*    clientId={clientId}*/}
+            {/*    buttonText="Register with Google"*/}
+            {/*    onSuccess={onSuccess}*/}
+            {/*    onFailure={onFailure}*/}
+            {/*    cookiePolicy={'single_host_origin'}*/}
+            {/*    responseType='code,token'*/}
+            {/*/>*/}
         </div>
     );
 };
