@@ -2,7 +2,7 @@ import React from 'react';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 
-const RegistrationPage = () => {
+const Registration = () => {
     const clientId = "YOUR_GOOGLE_CLIENT_ID";
 
     const onSuccess = async (response: any) => {
@@ -37,4 +37,4 @@ const RegistrationPage = () => {
     );
 };
 
-export default RegistrationPage;
+export default Registration;
