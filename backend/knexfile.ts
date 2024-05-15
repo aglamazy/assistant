@@ -19,10 +19,10 @@ const knexConfig: { [key: string]: Knex.Config } = {
             database: process.env.DB_NAME
         },
         migrations: {
-            directory: './src/db/migrations'
+            directory: './src/models/migrations'
         },
         seeds: {
-            directory: './src/db/seeds'
+            directory: './src/models/seeds'
         }
     }
     // Add other environments like 'production' as needed

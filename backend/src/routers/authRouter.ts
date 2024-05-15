@@ -1,12 +1,8 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import {register} from "../controllers/authController";
 
-export const authRouter = Router();
+const authRouter = express.Router();
 
-authRouter.post('/login', (req: Request, res: Response) => {
-    const { username, password } = req.body;
-    if (username === 'admin' && password === 'admin') {
-        res.send('Login successful');
-    } else {
-        res.status(401).send('Unauthorized');
-    }
-});
+authRouter.post('/register', register);
+
+export default authRouter;

@@ -1,13 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {authRouter} from "./routers/authRouter";
-import knex from 'knex';
-import knexConfig from './knexfile';
+import authRouter from "./routers/authRouter";
+import {db} from "./models/database";
 
 const app = express();
 const port = 3001;
-
-const db = knex(knexConfig.development);
 
 app.use(bodyParser.json());
 
@@ -15,7 +12,6 @@ app.use('/auth', authRouter);
 
 async function checkDatabaseConnection(): Promise<boolean> {
     try {
-
         const result = await db.raw('SELECT NOW()');
         console.log("Successfully connected to the database.");
         console.log("Current Date and Time:", result.rows[0].now);
