@@ -16,8 +16,13 @@ export async function register(req: Request, res: Response) {
 
         const password = crypto.randomBytes(8).toString('hex');
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await createUser({email: form.email, password: hashedPassword, status: UserStatus.Pending});
+        const hash = await bcrypt.hash(password, 10);
+        const newUser = await createUser({
+            name: `${form.firstName} ${form.lastName}`,
+            email: form.email,
+            hash,
+            status: UserStatus.Pending
+        });
         const payload = {user: newUser};
         const verificationToken = createToken(payload); // Implement createToken as needed
         await userHelper.sendVerificationEmail(newUser.email, verificationToken);

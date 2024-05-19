@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Grid, Container, Typography, Snackbar, Alert } from '@mui/material';
 import {Backend} from "../services/backend";
 import axios from "axios";
+import {IRegistrationForm} from "../../../types";
 
 function Registration() {
     const [firstName, setFirstName] = useState('');
@@ -13,7 +14,7 @@ function Registration() {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const form = { firstName, lastName, email };
+        const form: IRegistrationForm = { firstName, lastName, email };
 
         try {
             // Simulate an API call to your backend
