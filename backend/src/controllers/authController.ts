@@ -3,17 +3,21 @@ import {createUser, findUserByEmail, UserStatus} from '../models/userModel';
 import bcrypt from 'bcrypt';
 import {createToken} from "../utils/tokens";
 import {userHelper} from "../helpers/userHelper";
+import {IRegistrationForm} from "../../../types"
+import crypto from 'crypto';
 
 export async function register(req: Request, res: Response) {
-    const {email, password} = req.body;
+    const form = req.body as IRegistrationForm;
     try {
-        const existingUser = await findUserByEmail(email);
+        const existingUser = await findUserByEmail(form.email);
         if (existingUser) {
             return res.status(409).send('Email already in use');
         }
 
+        const password = crypto.randomBytes(8).toString('hex');
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await createUser({email, password: hashedPassword, status: UserStatus.Pending});
+        const newUser = await createUser({email: form.email, password: hashedPassword, status: UserStatus.Pending});
         const payload = {user: newUser};
         const verificationToken = createToken(payload); // Implement createToken as needed
         await userHelper.sendVerificationEmail(newUser.email, verificationToken);
