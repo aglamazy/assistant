@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import authRouter from "./routers/authRouter";
 import {db} from "./models/database";
 import cors from "cors";
+import requestLogger from "./utils/requestLogger";
+import morganLogger from "./utils/morganLogger";
 
 const app = express();
 const port = 3010;
@@ -11,6 +13,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/auth', authRouter);
+app.use(requestLogger); // Log when api starts
+app.use(morganLogger);  // Log at the end.
 
 async function checkDatabaseConnection(): Promise<boolean> {
     try {

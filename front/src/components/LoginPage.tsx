@@ -4,6 +4,7 @@ import Login from './Login'; // Adjust path as necessary
 import Registration from './Registration'; // Adjust path as necessary
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginPage.css';
+import VerifyEmail from "./VerifyEmail";
 
 function LoginPage() {
     const location = useLocation();  // Gets the location object
@@ -14,7 +15,9 @@ function LoginPage() {
         if (pathname.endsWith('register')) {
             return <Registration />;
         }
-        // Default to rendering the Login component
+        if (pathname.endsWith("verify-email")) {
+            return <VerifyEmail />;
+        }
         return <Login />;
     };
 

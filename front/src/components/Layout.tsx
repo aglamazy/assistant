@@ -4,7 +4,7 @@ import Footer from './Footer';
 import {Route, Routes} from "react-router-dom";
 import LoginPage from "./LoginPage";
 import PrivateRoute from "./PrivateRoute";
-import Dashboard from "./Dashboard"; // Adjust path as necessary
+import Dashboard from "./Dashboard";
 
 const Layout: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,6 +19,7 @@ const Layout: React.FC = () => {
             <main>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/verify-email" element={<LoginPage />} />
                     <Route path="/register" element={<LoginPage />} />
                     <Route
                         path="/"  // Set Dashboard as the root path

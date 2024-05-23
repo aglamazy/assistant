@@ -5,8 +5,7 @@ import {UserStatus} from "../userModel";
 
 export async function up(knex: Knex): Promise<void> {
     const statusValues = Object.values(UserStatus);
-    const statusEnum = `'${statusValues.join("', '")}'`; // Turns array into 'pending', 'active'
-    console.log(statusEnum);
+    const statusEnum = `'${statusValues.join("', '")}'`;
 
     await knex.schema.raw(`CREATE TYPE user_status AS ENUM (${statusEnum})`);
 
@@ -16,6 +15,7 @@ export async function up(knex: Knex): Promise<void> {
         table.string('email', 255).unique().notNullable();
         table.string('hash', 255).notNullable();
         table.enu('status', null, { useNative: true, existingType: true, enumName: 'user_status' });
+        table.timestamp('last_registration_email').defaultTo(knex.fn.now());
 
         // table.enu('status', null, {useNative: true, enumName: 'user_status'}).defaultTo(UserStatus.Pending);
         table.timestamps(true, true);

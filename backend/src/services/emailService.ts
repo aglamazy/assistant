@@ -5,23 +5,19 @@ export const emailServices = {
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD,
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
             }
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: process.env.SMTP_USER,
             to,
             subject,
-            text: email_body
+            html: email_body
         };
 
-        try {
-            await transporter.sendMail(mailOptions);
-            console.log('Verification email sent');
-        } catch (error) {
-            console.error('Error sending verification email', error);
-        }
+        const response = await transporter.sendMail(mailOptions);
+        console.log('Verification email sent');
     }
 }

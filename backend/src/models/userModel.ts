@@ -11,20 +11,18 @@ export interface IUser {
     email: string;
     hash: string;
     status: UserStatus;
+    last_registration_email: Date;
 }
 
-// Function to find a user by email
 export const findUserByEmail = async (email: string): Promise<IUser | undefined> => {
     return db<IUser>('users').where({ email }).first();
 };
 
-// Function to create a new user
+export const updateUser = async(user: IUser): Promise<IUser> => {
+    return db<IUser>('users').where('id', user.id).update(user);
+}
+
 export const createUser = async (user: Partial<IUser>): Promise<IUser> => {
     const [newUser] = await db<IUser>('users').insert(user).returning('*');
     return newUser;
-};
-
-// Function to update user status
-export const updateUserStatus = async (userId: number, status: UserStatus): Promise<void> => {
-    await db<IUser>('users').where({ id: userId }).update({ status });
 };
