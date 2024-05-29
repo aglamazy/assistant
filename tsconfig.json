@@ -1,8 +1,21 @@
 {
+  "compilerOptions": {
+    "paths": {
+      "@definitions": [
+        "./types"
+      ]
+    }
+  },
   "files": [],
   "references": [
-    { "path": "./types" },
-    { "path": "./frontend" },
-    { "path": "./backend" }
+    {
+      "path": "./types"
+    },
+    {
+      "path": "./frontend"
+    },
+    {
+      "path": "./backend"
+    }
   ]
 }

@@ -3,6 +3,7 @@ import {useSearchParams, useNavigate, Link} from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import {Backend} from "../services/backend";
+import {ResponseCodes} from "../common";
 
 const VerifyEmail = () => {
     const [message, setMessage] = useState('');
@@ -24,7 +25,20 @@ const VerifyEmail = () => {
                     }, 3000);
                 })
                 .catch(error => {
-                    setMessage(error.response.data.message);
+                    const conflictData = error.response.data;
+                    setMessage(conflictData.message);
+                    if (conflictData.code === ResponseCodes.UserActiveTryToLogin) {
+                        setTimeout(() => {
+                            navigate('/login'); // Redirect to login page after verification
+                        }, 3000);
+                        return;
+                    }
+                    if (conflictData.code === ResponseCodes.InvalidOrExpiredToken) {
+                        setTimeout(() => {
+                            navigate('/register'); // Redirect to login page after verification
+                        }, 3000);
+                        return;
+                    }
                     setSeverity('error');
                     setOpenSnackbar(true);
                 });

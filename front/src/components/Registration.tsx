@@ -1,80 +1,94 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Container, Typography, Snackbar, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import {Backend} from "../services/backend";
-import axios from "axios";
-import {IRegistrationForm} from "../../../types";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { Grid, TextField, Button, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-function Registration() {
+const Registration = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [message, setMessage] = useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+    const [severity, setSeverity] = useState<'success' | 'error'>('success');
+    const navigate = useNavigate();
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFirstName(event.target.value);
+    };
+
+    const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLastName(event.target.value);
+    };
+
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(event.target.value);
+    };
+
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(event.target.value);
+    };
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        const form: IRegistrationForm = { firstName, lastName, email };
+        const registrationData = {
+            firstName,
+            lastName,
+            email,
+            password
+        };
 
-        try {
-            // Simulate an API call to your backend
-            const response = await Backend.post('auth/register', form);
-
-            // Assuming the API call was successful, and the backend responds accordingly
-            if (response.data.success) {
-                setSnackbarMessage("Please check your email to confirm your registration.");
-                setSnackbarSeverity('success');
-            } else {
-                // Handle any situation where the API operation was not successful
-                setSnackbarMessage(response.data.message || "Registration failed. Please try again.");
-                setSnackbarSeverity('error');
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                // Handling errors specifically from Axios
-                setSnackbarMessage(error.response?.data.message || "An error occurred during registration.");
-            } else {
-                // Generic error handling
-                setSnackbarMessage("An unexpected error occurred. Please try again later.");
-            }
-            setSnackbarSeverity('error');
-        }
-
-        setOpenSnackbar(true);  // This will trigger the Snackbar to open
+        Backend.post('auth/register', registrationData)
+            .then(response => {
+                setMessage('Registration successful. Please check your email for the verification link.');
+                setSeverity('success');
+                setOpenSnackbar(true);
+                setTimeout(() => {
+                    navigate('/login');
+                }, 3000);
+            })
+            .catch(error => {
+                const errorMessage = error.response.data.message;
+                setMessage(errorMessage);
+                setSeverity('error');
+                setOpenSnackbar(true);
+            });
     };
 
-
-    const handleGoogleSignUp = () => {
-        console.log('Initiate Google Sign Up');
-        // Here you would initiate the Google sign-up process
-    };
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
+
     return (
-        <Container maxWidth="sm">
-            <Typography variant="h4" component="h1" gutterBottom>
-                Register
-            </Typography>
+        <div>
+            <h1>Register</h1>
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <TextField
                             fullWidth
                             label="First Name"
                             variant="outlined"
                             value={firstName}
-                            onChange={e => setFirstName(e.target.value)}
+                            onChange={handleFirstNameChange}
                             required
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                         <TextField
                             fullWidth
                             label="Last Name"
                             variant="outlined"
                             value={lastName}
-                            onChange={e => setLastName(e.target.value)}
+                            onChange={handleLastNameChange}
                             required
                         />
                     </Grid>
@@ -85,29 +99,48 @@ function Registration() {
                             type="email"
                             variant="outlined"
                             value={email}
-                            onChange={e => setEmail(e.target.value)}
+                            onChange={handleEmailChange}
                             required
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button type="submit" fullWidth variant="contained" color="primary">
-                            Submit
-                        </Button>
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            type={showPassword ? "text" : "password"}
+                            variant="outlined"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            required
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button fullWidth variant="outlined" color="secondary" onClick={handleGoogleSignUp}>
-                            Sign Up with Google
+                        <Button type="submit" variant="contained" color="primary" fullWidth>
+                            Register
                         </Button>
                     </Grid>
                 </Grid>
             </form>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-                    {snackbarMessage}
+                <Alert onClose={handleCloseSnackbar} severity={severity}>
+                    {message}
                 </Alert>
             </Snackbar>
-        </Container>
+        </div>
     );
-}
+};
 
 export default Registration;
