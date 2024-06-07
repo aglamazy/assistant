@@ -25,7 +25,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "postinstall": "npm run symlink-common",
-    "copy-common": "copyfiles '../common/*.ts' src"
+    "copy-common": "cd ../backend/src && copyfiles 'common/*.ts' src"
   },
   "eslintConfig": {
     "extends": [

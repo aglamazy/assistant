@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import {ResponseCodes} from "../../../types/ResponseCodes";
+import {IConflictData, ResponseCodes} from "../common";
 
 class Responses {
     static Ok(res: Response, message: string) {
@@ -18,11 +18,11 @@ class Responses {
     }
 
     static Conflict(res: Response, message: string, code: ResponseCodes) {
-        res.status(409).json({
+        res.status(409).json(   {
             success: false,
             message: message,
             code
-        });
+        } as IConflictData);
     }
 
     static BadRequest(res: Response, message: string) {

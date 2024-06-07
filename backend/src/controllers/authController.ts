@@ -3,11 +3,9 @@ import { createUser, findUserByEmail, updateUser, UserStatus } from '../models/u
 import bcrypt from 'bcrypt';
 import { createToken, verifyToken } from "../utils/tokens";
 import { userHelper } from "../helpers/userHelper";
-import { IRegistrationForm } from "../../../types";
-import crypto from 'crypto';
 import Responses from "../utils/Responses";
-import { ResponseCodes } from "../../../types/ResponseCodes";
 import jwt from "jsonwebtoken";
+import {IRegistrationForm, ResponseCodes} from "../common";
 
 export async function register(req: Request, res: Response) {
     const form = req.body as IRegistrationForm;
@@ -28,7 +26,7 @@ export async function register(req: Request, res: Response) {
             user = existingUser;
         } else {
             // Create a user.
-            const password = crypto.randomBytes(8).toString('hex');
+            const password = form.password;
             const hash = await bcrypt.hash(password, 10);
             user = await createUser({
                 name: `${form.firstName} ${form.lastName}`,

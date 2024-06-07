@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Backend} from "../services/backend";
+import { Backend } from "../services/backend";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { Grid, TextField, Button, IconButton, InputAdornment } from '@mui/material';
@@ -15,6 +15,7 @@ const Registration = () => {
     const [message, setMessage] = useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [severity, setSeverity] = useState<'success' | 'error'>('success');
+    const [showThankYou, setShowThankYou] = useState(false);
     const navigate = useNavigate();
 
     const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,12 +49,9 @@ const Registration = () => {
 
         Backend.post('auth/register', registrationData)
             .then(response => {
-                setMessage('Registration successful. Please check your email for the verification link.');
+                setMessage('Registration successful. Thank you for joining us!');
                 setSeverity('success');
-                setOpenSnackbar(true);
-                setTimeout(() => {
-                    navigate('/login');
-                }, 3000);
+                setShowThankYou(true);
             })
             .catch(error => {
                 const errorMessage = error.response.data.message;
@@ -69,76 +67,90 @@ const Registration = () => {
 
     return (
         <div>
-            <h1>Register</h1>
-            <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="First Name"
-                            variant="outlined"
-                            value={firstName}
-                            onChange={handleFirstNameChange}
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Last Name"
-                            variant="outlined"
-                            value={lastName}
-                            onChange={handleLastNameChange}
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Email"
-                            type="email"
-                            variant="outlined"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Password"
-                            type={showPassword ? "text" : "password"}
-                            variant="outlined"
-                            value={password}
-                            onChange={handlePasswordChange}
-                            required
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button type="submit" variant="contained" color="primary" fullWidth>
-                            Register
-                        </Button>
-                    </Grid>
-                </Grid>
-            </form>
-            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity={severity}>
-                    {message}
-                </Alert>
-            </Snackbar>
+            {showThankYou ? (
+                <div>
+                    <h1>Thank You for Registering!</h1>
+                    <p>Registration mail was send to your inbox.</p>
+                    <Button variant="contained" color="primary" onClick={() => navigate('/')}>
+                        Go to Home
+                    </Button>
+                </div>
+            ) : (
+                <>
+                    <h1>Register</h1>
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="First Name"
+                                    variant="outlined"
+                                    value={firstName}
+                                    onChange={handleFirstNameChange}
+                                    required
+                                    autoComplete="given-name"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Last Name"
+                                    variant="outlined"
+                                    value={lastName}
+                                    onChange={handleLastNameChange}
+                                    required
+                                    autoComplete="family-name"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Email"
+                                    type="email"
+                                    variant="outlined"
+                                    value={email}
+                                    onChange={handleEmailChange}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Password"
+                                    type={showPassword ? "text" : "password"}
+                                    variant="outlined"
+                                    value={password}
+                                    onChange={handlePasswordChange}
+                                    required
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button type="submit" variant="contained" color="primary" fullWidth>
+                                    Register
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                    <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                        <Alert onClose={handleCloseSnackbar} severity={severity}>
+                            {message}
+                        </Alert>
+                    </Snackbar>
+                </>
+            )}
         </div>
     );
 };

@@ -1,15 +1,42 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { TextField, Button, Container, Box, Typography } from '@mui/material';
+import {Backend} from "../services/backend";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const [severity, setSeverity] = useState<'success' | 'error'>('success');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+
+    const handleLogin = (event: React.FormEvent) => {
         event.preventDefault();
-        console.log('Logging in:', username, password);
-        // Additional login logic here
+        const loginData = {
+            username,
+            password
+        };
+
+        Backend.post('auth/login', loginData)
+            .then(response => {
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 3000);
+            })
+            .catch(error => {
+                const errorMessage = error.response.data.message;
+                setMessage(errorMessage);
+                setSeverity('error');
+                setOpenSnackbar(true);
+            });
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
     };
 
     return (
@@ -62,6 +89,11 @@ function Login() {
                         Don't have an account? <Link to="/register">Register</Link>
                     </Typography>
                 </Box>
+                <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                    <Alert onClose={handleCloseSnackbar} severity={severity}>
+                        {message}
+                    </Alert>
+                </Snackbar>
             </Box>
         </Container>
     );

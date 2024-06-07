@@ -1,2 +1,2 @@
 export * from './IRegistrationForm'
-export * from './General'
+export * from './ResponseCodes'

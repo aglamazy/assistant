@@ -55,7 +55,7 @@ const VerifyEmail = () => {
 
     return (
         <div>
-            <h1>Email Verification</h1>
+            <h1>Verifying your email</h1>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={severity}>
                     {message}
