@@ -1,11 +1,13 @@
 import { Response } from 'express';
 import {IConflictData, ResponseCodes} from "../common";
+import {ValidationError} from "express-validator/lib/base";
+import {Result, ResultFactory} from "express-validator";
 
 class Responses {
-    static Ok(res: Response, message: string) {
+    static Ok(res: Response, data: any) {
         res.status(200).json({
             success: true,
-            message: message
+            data
         });
     }
 
@@ -17,10 +19,10 @@ class Responses {
         });
     }
 
-    static Conflict(res: Response, message: string, code: ResponseCodes) {
+    static Conflict(res: Response, message: string | Result<ValidationError>, code: ResponseCodes) {
         res.status(409).json(   {
             success: false,
-            message: message,
+            message,
             code
         } as IConflictData);
     }

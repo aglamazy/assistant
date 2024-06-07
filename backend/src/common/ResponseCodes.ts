@@ -1,7 +1,8 @@
 export enum ResponseCodes {
     UserActiveTryToLogin = "UserActiveTryToLogin",
     UserNeedToWaitToSendAgain = "UserNeedToWaitToSendAgain",
-    InvalidOrExpiredToken = 'InvalidOrExpiredToken'
+    InvalidOrExpiredToken = 'InvalidOrExpiredToken',
+    LoginFailed = 'LoginFailed'
 }
 
 export interface IConflictData {

@@ -1,11 +1,15 @@
-import { Request, Response } from 'express';
-import { createUser, findUserByEmail, updateUser, UserStatus } from '../models/userModel';
+import {Request, Response} from 'express';
+import {createUser, findUserByEmail, updateUser, UserStatus} from '../models/userModel';
 import bcrypt from 'bcrypt';
-import { createToken, verifyToken } from "../utils/tokens";
-import { userHelper } from "../helpers/userHelper";
+import {createToken, verifyToken} from "../utils/tokens";
+import {userHelper} from "../helpers/userHelper";
 import Responses from "../utils/Responses";
 import jwt from "jsonwebtoken";
 import {IRegistrationForm, ResponseCodes} from "../common";
+import {body, validationResult} from 'express-validator';
+import Logger from "../utils/logger";
+import {ControllerError} from "../utils/errors";
+
 
 export async function register(req: Request, res: Response) {
     const form = req.body as IRegistrationForm;
@@ -66,3 +70,47 @@ export async function verifyEmail(req: Request, res: Response) {
         return Responses.InternalServerError(res, "Email verification failed");
     }
 }
+
+export const login = [
+    // Validate and sanitize inputs
+    body('username').trim().isLength({ min: 1 }).withMessage('Username is required'),
+    body('password').trim().isLength({ min: 1 }).withMessage('Password is required'),
+
+    async (req: Request, res: Response) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            Logger.info(errors.toString());
+            return Responses.Conflict(res, "Login failed", ResponseCodes.LoginFailed);
+        }
+
+        const { username, password } = req.body;
+
+        try {
+            // Check if the user exists
+            const user = await findUserByEmail( username );
+            if (!user) {
+                Logger.info("User not found");
+                return Responses.Conflict(res, "Login failed", ResponseCodes.LoginFailed);
+            }
+
+            // Validate the password
+            const isMatch = await bcrypt.compare(password, user.hash);
+            if (!isMatch) {
+                Logger.info("password not match");
+                return Responses.Conflict(res, "Login failed", ResponseCodes.LoginFailed);
+            }
+
+            // Create a JWT token
+            const token = jwt.sign(
+                { user },
+                process.env.JWT_SECRET as string, // Use a secret key from environment variables
+                { expiresIn: process.env.JWT_EXPIRE } // Token expires in 1 hour
+            );
+
+            return Responses.Ok(res, {token});
+
+        } catch (error) {
+            ControllerError(res, error);
+        }
+    }
+];
