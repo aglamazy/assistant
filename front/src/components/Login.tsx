@@ -23,6 +23,7 @@ function Login() {
 
         Backend.post('auth/login', loginData)
             .then(response => {
+                localStorage.setItem('userToken', response.data.data.token);
                 setTimeout(() => {
                     navigate('/dashboard');
                 }, 3000);

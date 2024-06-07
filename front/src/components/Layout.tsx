@@ -10,7 +10,7 @@ const Layout: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        const userDetails = localStorage.getItem('userDetails');
+        const userDetails = localStorage.getItem('userToken');
         setIsAuthenticated(!!userDetails); // Convert to boolean: true if userDetails exist
     }, []);
     return (
